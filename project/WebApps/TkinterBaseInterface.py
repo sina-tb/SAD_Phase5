@@ -14,7 +14,7 @@ class TkinterBaseInterface:
         pass
 
     def get_command(self):
-        command1 = Command(header='', 
-                           body={'options':{}})
+        command1 = Command(header='', # command you give to us
+                           body={'options':{}}) # options of command
         
         return command1
