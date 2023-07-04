@@ -14,7 +14,7 @@ class TkinterBaseInterface:
         pass
 
     def get_command(self):
-        command1 = Command(header='', # command you give to us
+        command1 = Command(header='', # command you give to us like system class functions except run and __init__
                            body={'options':{}}) # options of command
         
         return command1
