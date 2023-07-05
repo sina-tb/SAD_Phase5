@@ -9,7 +9,7 @@ class TkinterBaseInterface:
     def __init__(self):
         print('==>> in init::TkinterBaseInterface')
     
-    def show_page(self, status):
+    def show_page(self, status, text=None):
         # status is page you show
         pass
 
