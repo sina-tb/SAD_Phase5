@@ -9,39 +9,50 @@ class Command:
         self._body = body # dict of dicts
 
 class TkinterBaseInterface:
-    def __init__(self):
-        print('==>> in init::TkinterBaseInterface')
 
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Health Service")
+
+        homePage = tk.Frame(self.root)
+        packages = tk.Frame(self.root)
+        fillPrerequisites = tk.Frame(self.root)
+        successfulMessage = tk.Frame(self.root)
+
+        self.pages = [homePage, packages, fillPrerequisites, successfulMessage]
+        self.my_command = Command(header='', body={'options':{}})
 
     def mouse_wheel(event):
         canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-    def show_page(page,pages):
-        for p in pages:
+    def show_page(self, page):
+        for p in self.pages:
             p.pack_forget()
 
         page.pack()
     
-    def home_page_handler(self,homePage, root, packages):
+    def home_page_handler(self):
+        self.show_page(self.pages[0])
 
-        label_home = tk.Label(homePage, text="Welcome to Home Page")
+        label_home = tk.Label(self.pages[0], text="Welcome to Home Page")
         label_home.pack()
 
-        button1 = tk.Button(homePage, text="Request New Package", command=lambda: self.show_page(packages))
+        button1 = tk.Button(self.pages[0], text="Request New Package", command=lambda: self.update_command('request_new_package',{}))
         button1.pack()
 
-        button2 = tk.Button(homePage, text="Show Last Status of Requests", command=lambda: self.show_page(homePage))
+        button2 = tk.Button(self.pages[0], text="Show Last Status of Requests", command=lambda: self.update_command('show_last_status_of_requests',{}))
         button2.pack()
 
-        button3 = tk.Button(homePage, text="Profile", command=lambda: self.show_page(homePage))
+        button3 = tk.Button(self.pages[0], text="Profile", command=lambda: self.update_command('show_profile',{}))
         button3.pack()
 
-        button4 = tk.Button(homePage, text="Logout", command=lambda: root.destroy())
+        button4 = tk.Button(self.pages[0], text="Logout", command=lambda: self.update_command("logout",{}))
         button4.pack()
 
-    def package_page_handler(packages, list_of_packages):
-    
-        label_package = tk.Label(packages, text="Select a Package:")
+    def package_page_handler(self, list_of_packages):
+        self.show_page(self.pages[1])
+
+        label_package = tk.Label(self.pages[1], text="Select a Package:")
         label_package.pack()
         v = tk.IntVar()
 
@@ -49,30 +60,30 @@ class TkinterBaseInterface:
             print(v.get())
 
         for x in range(len(list_of_packages)):
-            tk.Radiobutton(packages, text=list_of_packages[x], padx = 20, variable=v, command=ShowChoice,value= x).pack(anchor=tk.W)
+            tk.Radiobutton(self.pages[1], text=list_of_packages[x], padx = 20, variable=v, command=ShowChoice,value= x).pack(anchor=tk.W)
 
         # Set initial selection
 
-        button1 = tk.Button(packages, text="Submit", command=lambda: show_page(fillPrerequisites))
+        button1 = tk.Button(self.pages[1], text="Submit", command=lambda: self.update_command("fill_prerequisites", {}))
         button1.pack()
 
-        button2 = tk.Button(packages, text="Back to Home Page", command=lambda: show_page(homePage))
+        button2 = tk.Button(self.pages[1], text="Back to Home Page", command=lambda: self.update_command("return_to_home",{}))
         button2.pack()
 
-    def show_prerequisites(fillPrerequisites, list_of_preRequitsites):
+    def show_prerequisites(self, list_of_preRequitsites):
         # Create a scrollbar
-        scrollbar = tk.Scrollbar(fillPrerequisites)
+        scrollbar = tk.Scrollbar(self.pages[2])
         scrollbar.pack(side="right", fill="y")
 
         # Create a canvas
-        canvas = tk.Canvas(fillPrerequisites, bg="white", yscrollcommand=scrollbar.set)
+        canvas = tk.Canvas(self.pages[2], bg="white", yscrollcommand=scrollbar.set)
         canvas.pack(side="left", fill="both", expand=True)
 
         # Configure the scrollbar to work with the canvas
         scrollbar.config(command=canvas.yview)
 
         # Bind the mouse wheel event to the canvas
-        canvas.bind_all("<MouseWheel>", mouse_wheel)
+        canvas.bind_all("<MouseWheel>", self.mouse_wheel)
 
         # Create a frame inside the canvas for the content
         content_frame = tk.Frame(canvas)
@@ -90,67 +101,48 @@ class TkinterBaseInterface:
         canvas.config(scrollregion=canvas.bbox("all"))
 
 
-    def prerequisites_page_handler(fillPrerequisites, preRequisites):
+    def prerequisites_page_handler(self, preRequisites):
+        self.show_page(self.pages[2])
 
-        label_pre = tk.Label(fillPrerequisites, text="Please Fill Prerequisites")
+        label_pre = tk.Label(self.pages[2], text="Please Fill Prerequisites")
         label_pre.pack()
 
-        show_prerequisites(fillPrerequisites, preRequisites)
+        self.show_prerequisites(preRequisites)
 
-        button1 = tk.Button(fillPrerequisites, text="Submit", command=lambda: show_page(successfulMessage))
+        button1 = tk.Button(self.pages[2], text="Submit", command=lambda: self.update_command("show_message",{}))
         button1.pack()
 
-        button2 = tk.Button(fillPrerequisites, text="Back to Package Page", command=lambda: show_page(packages))
+        button2 = tk.Button(self.pages[2], text="Back to Package Page", command=lambda: self.update_command("return_to_select_package",{}))
         button2.pack()
 
-    def successful_message_page(successfulMessage):
+    def successful_message_page(self,message):
+        self.show_page(self.pages[3])
 
-        label_success = tk.Label(successfulMessage, text="successful message")
+        label_success = tk.Label(self.pages[3], text="successful message")
         label_success.pack()
 
-        button1 = tk.Button(successfulMessage, text="Back to Home Page", command=lambda: show_page(homePage))
-        button1.pack()
+        label_success = tk.Label(self.pages[3], text=message)
+        label_success.pack()
 
-    def choose_page(self, status, ):
-        if status == manual.PageStatus.HOME_PAGE:
-            self.home_page_handler()
-        elif status == manual.PageStatus.REQUEST_NEW_PACKGE:
-            self.package_page_handler()
-        elif status == manual.PageStatus.FILL_PREREQUISITES:
-            self.prerequisites_page_handler()
-        elif status == manual.PageStatus.SUCCESSFULL_ADD_REQUEST_MESSAGE:
-            self.successful_message_page()
+        button1 = tk.Button(self.pages[3], text="Back to Home Page", command=lambda: self.update_command("return_to_home",{}))
+        button1.pack()
             
 
-    def main_process(self):
-        status = manual.PageStatus.HOME_PAGE
-        root = tk.Tk()
-        root.title("Health Service")
-
-
-
-        homePage = tk.Frame(root)
-        packages = tk.Frame(root)
-        fillPrerequisites = tk.Frame(root)
-        successfulMessage = tk.Frame(root)
-
-        pages = [homePage, packages, fillPrerequisites, successfulMessage]
-        list_of_packages = ["first", "second", "third"]
-        preRequisites = ["blood type", "gender", "feel good?", "beeeee"," bpppppppppp", "sssssssssssss","s","f","sf","sdf","sfd","sdfsdfs" ]
-        message = ["here is your message!"]
-
-        self.choose_page(status, pages, list_of_packages, preRequisites, message)
-
-        #Initially show page 1
-        self.show_page(homePage)
-        # Start the tkinter event loop
-        root.mainloop()
-
+    def update_command(self,header, body):
+        self.my_command = (header, body)
 
     def get_command(self):
-        command1 = Command(header='', # command you give to us like system class functions except run and __init__
-                           body={'options':{}}) # options of command
-        
-        return command1
+        return self.my_command
 
     
+list_of_packages = ["first", "second", "third"]
+preRequisites = ["blood type", "gender", "feel good?", "beeeee"," bpppppppppp", "sssssssssssss","s","f","sf","sdf","sfd","sdfsdfs" ]
+message = ["here is your message!"]
+
+
+hey = TkinterBaseInterface()
+# hey.prerequisites_page_handler(preRequisites)
+# hey.successful_message_page(message)
+# hey.package_page_handler(list_of_packages)
+hey.home_page_handler()
+hey.root.mainloop()
