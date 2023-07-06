@@ -47,9 +47,10 @@ class System:
     #done
     def fill_prerequisites(self, command):
         package_id = command._body['package_id']
-        prerequisities = self._server.get_prerequisities(package_id)
-        self._status = manual.PageStatus.FILL_PREREQUISITES
-        self._interface.prerequisites_page_handler(prerequisities)
+        print(package_id)
+        # prerequisities = self._server.get_prerequisities(package_id)
+        # self._status = manual.PageStatus.FILL_PREREQUISITES
+        # self._interface.prerequisites_page_handler(prerequisities)
 
     #done
     def show_message(self, command):
