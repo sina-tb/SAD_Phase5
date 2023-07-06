@@ -22,6 +22,8 @@ class TkinterBaseInterface:
         successfulMessage = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200, style="BW.TLabel")
 
         self.pages = [homePage, packages, fillPrerequisites, successfulMessage]
+        self.prerequisities_size = 0
+        self.package = None
 
     def mouse_wheel(event):
         canvas.yview_scroll(int(-1*(event.delta/120)), "units")
@@ -54,27 +56,30 @@ class TkinterBaseInterface:
 
     def package_page_handler(self, list_of_packages):
         list_of_packages = eval(list_of_packages)
+        self.list_of_packages = list_of_packages
         self.pages[1] = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200,style="BW.TLabel")
 
         self.show_page(self.pages[1])
 
         label_package = tk.Label(self.pages[1], text="Select a Package:",font=("Palatino", 18), fg="purple", bg= "pink")
         label_package.pack()
-        v = tk.IntVar()
+        self.v = tk.IntVar()
 
         def ShowChoice():
-            print(v.get())
+            print(self.v.get())
 
         for package in list_of_packages:
-            tk.Radiobutton(self.pages[1], text=package['name'], font=("Palatino", 18, "bold"), fg= "blue", bg= "pink" , variable=v, command=ShowChoice,value=package['id']).pack(anchor=tk.W)
+            tk.Radiobutton(self.pages[1], text=package['name'], font=("Palatino", 18, "bold"), fg= "blue", bg= "pink" , variable=self.v, command=ShowChoice,value=package['id']).pack(anchor=tk.W)
 
-        button1 = tk.Button(self.pages[1], text="Submit", font=("Palatino", 11, "bold"), fg= "green", bg= "pink" , command=lambda: self.update_command("fill_prerequisites", {'package_id' : v.get()}))
+        button1 = tk.Button(self.pages[1], text="Submit", font=("Palatino", 11, "bold"), fg= "green", bg= "pink" , command=lambda: self.update_command("fill_prerequisites", {'package_id' : self.v.get()}))
         button1.pack()
 
         button2 = tk.Button(self.pages[1], text="Back to Home Page", font=("Palatino", 11, "bold"), fg= "red", bg= "pink" , command=lambda: self.update_command("return_to_home",{}))
         button2.pack()
 
     def show_prerequisites(self, list_of_preRequitsites):
+        self.prerequisities_size = len(list_of_preRequitsites)
+        self.entry_name = self.prerequisities_size * [None]
         scrollbar = tk.Scrollbar(self.pages[2])
         scrollbar.pack(side="right", fill="y")
 
@@ -89,18 +94,17 @@ class TkinterBaseInterface:
         canvas.create_window((0, 0), window=content_frame)
 
         for i in range(len(list_of_preRequitsites)):
-            label = tk.Label(content_frame, text= list_of_preRequitsites[i],font=("Palatino", 11), fg="black")
+            label = tk.Label(content_frame, text=list_of_preRequitsites[i]['description'],font=("Palatino", 11), fg="black")
             label.pack()
-            entry_name = tk.Entry(content_frame,font=("Palatino", 11), fg="grey", bg= "white")
-            entry_name.pack()
+            self.entry_name[i] = tk.Entry(content_frame, font=("Palatino", 11), fg="grey", bg= "white")
+            self.entry_name[i].pack()
 
         canvas.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
 
     def prerequisites_page_handler(self, preRequisites):
-        preRequisites = eval(preRequisites)
-        print(preRequisites)
+        self.preRequisites = eval(preRequisites)
         self.pages[2] = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200, style="BW.TLabel")
 
         self.show_page(self.pages[2])
@@ -108,15 +112,21 @@ class TkinterBaseInterface:
         label_pre = tk.Label(self.pages[2], text="Please Fill Prerequisites",font=("Palatino", 18), fg="purple", bg= "pink")
         label_pre.pack()
 
-        self.show_prerequisites(preRequisites)
+        self.show_prerequisites(self.preRequisites)
 
-        button1 = tk.Button(self.pages[2], text="Submit",font=("Palatino", 11), fg="green", bg= "pink", command=lambda: self.update_command("show_message",{}))
+        button1 = tk.Button(self.pages[2], text="Submit",font=("Palatino", 11), fg="green", bg= "pink", command=lambda: self.send_record())
         button1.pack()
 
         button2 = tk.Button(self.pages[2], text="Back to Package Page",font=("Palatino", 11), fg="red", bg= "pink", command=lambda: self.update_command("return_to_select_package",{}))
         button2.pack()
+    
+    def send_record(self):
+        options = {'package_id':self.v.get() - 1, 'package_name':self.list_of_packages[self.v.get() - 1]['name']}
+        for i in range(self.prerequisities_size):
+            options[self.preRequisites[i]['description']] = self.entry_name[i].get()
+        self.update_command("show_message",options)
 
-    def successful_message_page(self,message):
+    def successful_message_page(self, message):
         self.pages[3] = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200, style="BW.TLabel")
 
         self.show_page(self.pages[3])
@@ -134,18 +144,3 @@ class TkinterBaseInterface:
     def update_command(self,header, body):
         self._sys.run_command(Command(header=header,
                                       body=body))
-
-    
-list_of_packages = ["first", "second", "third"]
-preRequisites = ["blood type", "gender", "Your pre visit tests","this","that","those"]
-message = "Cost : 200$\nSupporter : Ali Payande\nTracking Number : 80101021312\n"
-
-
-
-# examine the pages
-# hey = TkinterBaseInterface()
-# hey.prerequisites_page_handler(preRequisites)
-# hey.successful_message_page(message)
-# hey.package_page_handler(list_of_packages)
-# hey.home_page_handler()
-# hey.root.mainloop()
