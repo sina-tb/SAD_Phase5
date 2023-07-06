@@ -1,7 +1,5 @@
-import manual
 import tkinter as tk
 from tkinter import ttk
-import TkinterBaseInterface as Base
 
 class Command:
     def __init__(self, header, body):
@@ -124,6 +122,7 @@ class TkinterBaseInterface:
             
 
     def update_command(self,header, body):
+        print(123123123)
         self.my_command = (header, body)
 
     def get_command(self):

@@ -1,18 +1,19 @@
-from Back_end.Server import Server
+# from Back_end.Server import Server
 from WebApps.TkinterBaseInterface import TkinterBaseInterface
 import WebApps.manual as manual
 
 class System:
     def __init__(self):
-        self._server = Server()
+        # self._server = Server()
         self._interface = TkinterBaseInterface()
 
     def run(self):
         self.return_to_home()
-        # while (True):
-        #     command = self._interface.get_command()
-        #     print(command._header)
-        #     print(command._body)
+        self._interface.root.mainloop()
+        while (True):
+            command = self._interface.get_command()
+            print(command._header)
+            print(command._body)
             
         #     if command._header == 'logout':
         #         self.logout()
