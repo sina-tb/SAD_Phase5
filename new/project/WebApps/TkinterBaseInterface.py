@@ -78,7 +78,7 @@ class TkinterBaseInterface:
         scrollbar = tk.Scrollbar(self.pages[2])
         scrollbar.pack(side="right", fill="y")
 
-        canvas = tk.Canvas(self.pages[2], bg="pink", yscrollcommand=scrollbar.set,  width=180, height=200)
+        canvas = tk.Canvas(self.pages[2], bg="pink", yscrollcommand=scrollbar.set,  width=300, height=90)
         canvas.pack()
 
         scrollbar.config(command=canvas.yview)
