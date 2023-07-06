@@ -14,10 +14,13 @@ class TkinterBaseInterface:
         self.root = tk.Tk()
         self.root.title("Health Service")
 
-        homePage = tk.Frame(self.root)
-        packages = tk.Frame(self.root)
-        fillPrerequisites = tk.Frame(self.root)
-        successfulMessage = tk.Frame(self.root)
+        style = ttk.Style()
+        style.configure("BW.TLabel", background="pink")
+
+        homePage = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200,style="BW.TLabel")
+        packages = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200,style="BW.TLabel")
+        fillPrerequisites = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200, style="BW.TLabel")
+        successfulMessage = ttk.Frame(self.root, padding=0, relief="groove", borderwidth=200, style="BW.TLabel")
 
         self.pages = [homePage, packages, fillPrerequisites, successfulMessage]
         self.my_command = Command(header='', body={'options':{}})
@@ -34,25 +37,25 @@ class TkinterBaseInterface:
     def home_page_handler(self):
         self.show_page(self.pages[0])
 
-        label_home = tk.Label(self.pages[0], text="Welcome to Home Page")
-        label_home.pack()
+        label_home = tk.Label(self.pages[0], text="Welcome to Home Page", font=("Comic Sans MS", 18), fg="purple", bg= "pink")
+        label_home.pack(side="top", padx=10, pady=10)
 
-        button1 = tk.Button(self.pages[0], text="Request New Package", command=lambda: self.update_command('request_new_package',{}))
+        button1 = tk.Button(self.pages[0], text="Request New Package", font=("Comic Sans MS", 11, "bold"), fg= "blue", bg= "pink" , command=lambda: self.update_command('request_new_package',{}) )
         button1.pack()
 
-        button2 = tk.Button(self.pages[0], text="Show Last Status of Requests", command=lambda: self.update_command('show_last_status_of_requests',{}))
+        button2 = tk.Button(self.pages[0], text="Show Last Status of Requests",font=("Comic Sans MS", 11, "bold") ,fg= "orange", bg= "pink" , command=lambda: self.update_command('show_last_status_of_requests',{}))
         button2.pack()
 
-        button3 = tk.Button(self.pages[0], text="Profile", command=lambda: self.update_command('show_profile',{}))
+        button3 = tk.Button(self.pages[0], text="Profile", font=("Comic Sans MS", 11, "bold") ,fg= "green", bg= "pink", command=lambda: self.update_command('show_profile',{}))
         button3.pack()
 
-        button4 = tk.Button(self.pages[0], text="Logout", command=lambda: self.update_command("logout",{}))
+        button4 = tk.Button(self.pages[0], text="Logout",font=("Comic Sans MS", 11, "bold") ,fg= "black", bg= "pink",  command=lambda: self.update_command("logout",{}))
         button4.pack()
 
     def package_page_handler(self, list_of_packages):
         self.show_page(self.pages[1])
 
-        label_package = tk.Label(self.pages[1], text="Select a Package:")
+        label_package = tk.Label(self.pages[1], text="Select a Package:",font=("Comic Sans MS", 18), fg="purple", bg= "pink")
         label_package.pack()
         v = tk.IntVar()
 
@@ -60,43 +63,35 @@ class TkinterBaseInterface:
             print(v.get())
 
         for x in range(len(list_of_packages)):
-            tk.Radiobutton(self.pages[1], text=list_of_packages[x], padx = 20, variable=v, command=ShowChoice,value= x).pack(anchor=tk.W)
+            tk.Radiobutton(self.pages[1], text=list_of_packages[x], font=("Comic Sans MS", 11, "bold"), fg= "blue", bg= "pink" , variable=v, command=ShowChoice,value= x).pack(anchor=tk.W)
 
-        # Set initial selection
 
-        button1 = tk.Button(self.pages[1], text="Submit", command=lambda: self.update_command("fill_prerequisites", {}))
+        button1 = tk.Button(self.pages[1], text="Submit", font=("Comic Sans MS", 11, "bold"), fg= "green", bg= "pink" , command=lambda: self.update_command("fill_prerequisites", {}))
         button1.pack()
 
-        button2 = tk.Button(self.pages[1], text="Back to Home Page", command=lambda: self.update_command("return_to_home",{}))
+        button2 = tk.Button(self.pages[1], text="Back to Home Page", font=("Comic Sans MS", 11, "bold"), fg= "red", bg= "pink" , command=lambda: self.update_command("return_to_home",{}))
         button2.pack()
 
     def show_prerequisites(self, list_of_preRequitsites):
-        # Create a scrollbar
         scrollbar = tk.Scrollbar(self.pages[2])
         scrollbar.pack(side="right", fill="y")
 
-        # Create a canvas
-        canvas = tk.Canvas(self.pages[2], bg="white", yscrollcommand=scrollbar.set)
-        canvas.pack(side="left", fill="both", expand=True)
+        canvas = tk.Canvas(self.pages[2], bg="pink", yscrollcommand=scrollbar.set,  width=180, height=200)
+        canvas.pack()
 
-        # Configure the scrollbar to work with the canvas
         scrollbar.config(command=canvas.yview)
 
-        # Bind the mouse wheel event to the canvas
         canvas.bind_all("<MouseWheel>", self.mouse_wheel)
 
-        # Create a frame inside the canvas for the content
         content_frame = tk.Frame(canvas)
-        canvas.create_window((0, 0), window=content_frame, anchor="nw")
+        canvas.create_window((0, 0), window=content_frame)
 
-        # Add content to the frame (you can add any widgets here)
         for i in range(len(list_of_preRequitsites)):
-            label = tk.Label(content_frame, text= list_of_preRequitsites[i])
+            label = tk.Label(content_frame, text= list_of_preRequitsites[i],font=("Comic Sans MS", 11), fg="black")
             label.pack()
-            entry_name = tk.Entry(content_frame)
+            entry_name = tk.Entry(content_frame,font=("Comic Sans MS", 11), fg="grey", bg= "white")
             entry_name.pack()
 
-        # Update the canvas scroll region
         canvas.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
@@ -104,27 +99,27 @@ class TkinterBaseInterface:
     def prerequisites_page_handler(self, preRequisites):
         self.show_page(self.pages[2])
 
-        label_pre = tk.Label(self.pages[2], text="Please Fill Prerequisites")
+        label_pre = tk.Label(self.pages[2], text="Please Fill Prerequisites",font=("Comic Sans MS", 18), fg="purple", bg= "pink")
         label_pre.pack()
 
         self.show_prerequisites(preRequisites)
 
-        button1 = tk.Button(self.pages[2], text="Submit", command=lambda: self.update_command("show_message",{}))
+        button1 = tk.Button(self.pages[2], text="Submit",font=("Comic Sans MS", 11), fg="green", bg= "pink", command=lambda: self.update_command("show_message",{}))
         button1.pack()
 
-        button2 = tk.Button(self.pages[2], text="Back to Package Page", command=lambda: self.update_command("return_to_select_package",{}))
+        button2 = tk.Button(self.pages[2], text="Back to Package Page",font=("Comic Sans MS", 11), fg="red", bg= "pink", command=lambda: self.update_command("return_to_select_package",{}))
         button2.pack()
 
     def successful_message_page(self,message):
         self.show_page(self.pages[3])
 
-        label_success = tk.Label(self.pages[3], text="successful message")
+        label_success = tk.Label(self.pages[3], text="Your Package Saved Successfully",font=("Comic Sans MS", 18), fg="purple", bg= "pink")
         label_success.pack()
 
-        label_success = tk.Label(self.pages[3], text=message)
+        label_success = tk.Label(self.pages[3], text=message ,font=("Comic Sans MS", 11), fg="black", bg= "pink")
         label_success.pack()
 
-        button1 = tk.Button(self.pages[3], text="Back to Home Page", command=lambda: self.update_command("return_to_home",{}))
+        button1 = tk.Button(self.pages[3], text="Back to Home Page",font=("Comic Sans MS", 11), fg="red", bg= "pink", command=lambda: self.update_command("return_to_home",{}))
         button1.pack()
             
 
@@ -136,13 +131,15 @@ class TkinterBaseInterface:
 
     
 list_of_packages = ["first", "second", "third"]
-preRequisites = ["blood type", "gender", "feel good?", "beeeee"," bpppppppppp", "sssssssssssss","s","f","sf","sdf","sfd","sdfsdfs" ]
-message = ["here is your message!"]
+preRequisites = ["blood type", "gender", "Your pre visit tests","this","that","those"]
+message = "Cost : 200$\nSupporter : Ali Payande\nTracking Number : 80101021312\n"
 
 
-hey = TkinterBaseInterface()
+
+# examine the pages
+# hey = TkinterBaseInterface()
 # hey.prerequisites_page_handler(preRequisites)
 # hey.successful_message_page(message)
 # hey.package_page_handler(list_of_packages)
-hey.home_page_handler()
-hey.root.mainloop()
+# hey.home_page_handler()
+# hey.root.mainloop()
